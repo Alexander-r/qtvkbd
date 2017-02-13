@@ -1,5 +1,6 @@
 /*
- * This file is part of the Kvkbd project.
+ * This file is part of the Qtvkbd project.
+ * Copyright (C) 2016-2017 Alexander Ryapolov <srwork@gmail.com>
  * Copyright (C) 2007-2014 Todor Gyumyushev <yodor1@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,10 +18,10 @@
  *
  */
 
-#ifndef KVKBDAPP_H
-#define KVKBDAPP_H
+#ifndef QTVKBDAPP_H
+#define QTVKBDAPP_H
 
-#include <KUniqueApplication>
+#include <QApplication>
 #include <QAction>
 #include <QSignalMapper>
 #include <QGridLayout>
@@ -35,13 +36,13 @@
 #include "kbddock.h"
 #include "vkeyboard.h"
 
-class KvkbdApp : public KUniqueApplication
+class QtvkbdApp : public QApplication
 {
     Q_OBJECT
 
 public:
-    KvkbdApp(bool loginhelper=false);
-    ~KvkbdApp();
+    QtvkbdApp(int &argc, char **argv, bool loginhelper=false);
+    ~QtvkbdApp();
 
     
 
@@ -95,4 +96,4 @@ signals:
     void startupCompleted();
 };
 
-#endif // KVKBDAPP_H
+#endif // QTVKBDAPP_H

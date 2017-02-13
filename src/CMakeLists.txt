@@ -1,12 +1,12 @@
-find_package(KDE4 REQUIRED)
-find_package(Qt4 COMPONENTS QtGui QtCore QtXml REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5DBus REQUIRED)
 find_package(LibXslt REQUIRED)
 
-include(${QT_USE_FILE})
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include_directories( ${KDE4_INCLUDES}  ${QT_INCLUDES} )
+set(CMAKE_AUTOMOC ON)
 
-set(kvkbd_SRCS vkeyboard.cpp 
+set(qtvkbd_SRCS vkeyboard.cpp 
     x11keyboard.cpp
     dragwidget.cpp
     mainwidget.cpp
@@ -15,29 +15,31 @@ set(kvkbd_SRCS vkeyboard.cpp
     resizabledragwidget.cpp
     keysymconvert.cpp
     kbddock.cpp
-    kvkbdapp.cpp
+    qtvkbdapp.cpp
     kbdtray.cpp
     themeloader.cpp
     )
 
 
 
-SET(kvkbd_RESOURCES resources.qrc)
+SET(qtvkbd_RESOURCES resources.qrc)
 
 
-QT4_ADD_RESOURCES(kvkbd_RESOURCES_RCC ${kvkbd_RESOURCES})
+qt5_add_resources(qtvkbd_RESOURCES_RCC ${qtvkbd_RESOURCES})
 
-QT4_ADD_DBUS_ADAPTOR(kvkbd_SRCS org.kde.kvkbd.Kvkbd.xml
+qt5_add_dbus_adaptor(qtvkbd_SRCS org.kde.qtvkbd.Qtvkbd.xml
                        mainwidget.h MainWidget)
 
-QT4_ADD_DBUS_ADAPTOR(kvkbd_SRCS org.kde.kvkbd.Dock.xml
+qt5_add_dbus_adaptor(qtvkbd_SRCS org.kde.qtvkbd.Dock.xml
                        kbddock.h KbdDock)
 
-kde4_add_executable(kvkbd ${kvkbd_SRCS} ${kvkbd_RC_SRCS} ${kvkbd_RESOURCES_RCC})
+add_executable(qtvkbd ${qtvkbd_SRCS} ${qtvkbd_RC_SRCS} ${qtvkbd_RESOURCES_RCC})
 
-target_link_libraries(kvkbd ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${QT_LIBRARIES} X11 Xtst)
+qt5_use_modules(qtvkbd Core Widgets Gui Xml X11Extras DBus)
+
+target_link_libraries(qtvkbd ${QT_LIBRARIES} X11 Xtst)
 
 
-install(TARGETS kvkbd ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS qtvkbd RUNTIME DESTINATION bin)
 
-install( FILES kvkbd.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
+install( FILES qtvkbd.desktop  DESTINATION share/applications )

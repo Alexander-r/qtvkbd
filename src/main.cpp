@@ -21,14 +21,10 @@
 
 
 
-#include "kvkbdapp.h"
-#include <KAboutData>
-#include <KCmdLineArgs>
+#include "qtvkbdapp.h"
+#include <QCommandLineParser>
 
-static const char description[] =
-    I18N_NOOP("A virtual keyboard for KDE");
-
-static const char version[] = "0.7.2";
+//static const char version[] = "0.7.2";
 
 #include <X11/Xlib.h>
 
@@ -57,7 +53,7 @@ void findLoginWindow()
 			XFetchName(dipsy, kids[i], &win_name);
 			QString c(win_name);
 			
-			if (c=="kvkbd.login")
+            if (c=="qtvkbd.login")
  			{
  				long wid = kids[i];
 				XDestroyWindow(dipsy,wid);
@@ -71,30 +67,27 @@ void findLoginWindow()
 
 int main(int argc, char **argv)
 {
+    QCommandLineParser parser;
+    parser.setApplicationDescription("A virtual keyboard");
+    parser.addOption(
+        {{"l", "loginhelper"},
+            QCoreApplication::translate("main", "Stand alone version for use with KDM or XDM.\n"
+                                                "See qtvkbd Handbook for information on how to use this option.")}
+    );
+    QStringList arguments;
+    for (int a = 0; a < argc; ++a)
+    {
+        arguments.append(QString::fromLocal8Bit(argv[a]));
+    }
+    parser.parse(arguments);
 
-    KAboutData about("kvkbd", 0, ki18n("Kvkbd"), version, ki18n(description),
-                     KAboutData::License_LGPL_V3, ki18n("(C) 2007-2014 The Kvkbd Developers"));
-    about.addAuthor(ki18n("Todor Gyumyushev"), ki18n("Original Author"), "yodor1@gmail.com");
-    about.addAuthor(ki18n("Guillaume Martres"), ki18n("KDE4 port"), "smarter@ubuntu.com");
-    about.setProgramIconName("preferences-desktop-keyboard");
-
-    KCmdLineArgs::init(argc, argv, &about);
-    KCmdLineOptions options;
-
-    options.add("loginhelper", ki18n("Stand alone version for use with KDM or XDM.\n"
-                                     "See Kvkbd Handbook for information on how to use this option."));
-    KCmdLineArgs::addCmdLineOptions(options);
-
-    bool is_login = KCmdLineArgs::parsedArgs()->isSet("loginhelper");
+    bool is_login = parser.isSet("loginhelper");
     if (!is_login) {
       findLoginWindow();
     }
 	
-    KvkbdApp app(is_login);
+    QtvkbdApp app(argc, argv, is_login);
 
     return app.exec();
     
 }
-
-
-

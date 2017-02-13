@@ -89,7 +89,7 @@ void MainWidget::updateLayout(int index, QString layout_name)
         VButton *btn = (VButton*)buttons.at(a);
 
         if (btn->property("label").toString().length()<1) {
-            ButtonText text;
+            QString text;
 
             vkbd->textForKeyCode(btn->getKeyCode(), text);
             btn->setButtonText(text);
@@ -138,4 +138,3 @@ void MainWidget::updateFont(const QFont& widgetFont)
     this->setStyleSheet(buttonStyle);
 
 }
-#include "mainwidget.moc"

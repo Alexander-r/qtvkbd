@@ -8,7 +8,6 @@
 #include <QMouseEvent>
 #include <QTimer>
 #include <QDomNode>
-#include "x11keyboard.h"
 
 class VButton : public QPushButton
 {
@@ -25,8 +24,8 @@ public:
     unsigned int getKeyCode();
     void setKeyCode(unsigned int keyCode);
 
-    void setButtonText(const ButtonText& text);
-    ButtonText buttonText() const;
+    void setButtonText(const QString& text);
+    QString buttonText() const;
 
     void setTextIndex(int index);
     int textIndex();
@@ -50,7 +49,7 @@ protected:
     QTimer *keyTimer;
 
 
-    ButtonText mButtonText;
+    QString mButtonText;
     int mTextIndex;
 
     bool isCaps;

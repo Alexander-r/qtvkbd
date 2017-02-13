@@ -50,12 +50,12 @@ unsigned int VButton::getKeyCode()
 
 }
 
-void VButton::setButtonText(const ButtonText& text)
+void VButton::setButtonText(const QString &text)
 {
     this->mButtonText = text;
 }
 
-ButtonText VButton::buttonText() const
+QString VButton::buttonText() const
 {
     return this->mButtonText;
 }

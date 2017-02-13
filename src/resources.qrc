@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/theme">
-    <file>standart.xml</file>
-    <file>standart.css</file>
+        <file>standart.xml</file>
+        <file>standart.css</file>
+    </qresource>
+    <qresource prefix="/pics">
+        <file>tray.png</file>
     </qresource>
 </RCC>

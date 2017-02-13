@@ -1,5 +1,6 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
+ * This file is part of the Qtvkbd project.
+ * Copyright (C) 2016-2017 Alexander Ryapolov <srwork@gmail.com>
  * Copyright (C) 2014 Todor Gyumyushev <yodor1@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,18 +21,15 @@
 #ifndef X11KEYBOARD_H
 #define X11KEYBOARD_H
 
-#include "keysymconvert.h"
-#include <fixx11h.h>
-
-#include "vkeyboard.h"
-
 #include <QObject>
 #include <QTimer>
 #include <QStringList>
 #include <QChar>
 #include <QMap>
 
+#include "vkeyboard.h"
 
+#include "keysymconvert.h"
 
 class X11Keyboard : public VKeyboard
 {
@@ -40,7 +38,7 @@ class X11Keyboard : public VKeyboard
 public:
     X11Keyboard(QObject *parent=0);
     virtual ~X11Keyboard();
-    void textForKeyCode(unsigned int keyCode, ButtonText& text);
+    void textForKeyCode(unsigned int keyCode, QString& text);
 
 public slots:
     virtual void processKeyPress(unsigned int);

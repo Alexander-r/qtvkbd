@@ -1,5 +1,6 @@
 /*
- * This file is part of the Kvkbd project.
+ * This file is part of the Qtvkbd project.
+ * Copyright (C) 2016-2017 Alexander Ryapolov <srwork@gmail.com>
  * Copyright (C) 2007-2014 Todor Gyumyushev <yodor1@gmail.com>
  * Copyright (C) 2008 Guillaume Martres <smarter@ubuntu.com>
  *
@@ -26,14 +27,6 @@
 #include <QWidget>
 #include <QMouseEvent>
 
-#include <KIconLoader>
-#include <KLocale>
-
-#include "dockadaptor.h"
-
-#include <iostream>
-using namespace std;
-
 #define DEFAULT_WIDTH 	105
 #define DEFAULT_HEIGHT 	35
 
@@ -47,7 +40,7 @@ KbdDock::KbdDock(const WId& window) : DragWidget(0), wID(window)
 
     setFocusPolicy(Qt::NoFocus);
     
-    setToolTip(i18nc("@info:tooltip Displayed on the movable dock", "Toggle keyboard visibility"));
+    setToolTip(tr("Toggle keyboard visibility", "tooltip Displayed on the movable dock"));
     
     
     

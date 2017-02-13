@@ -29,16 +29,9 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QMenu>
+#include <QStandardPaths>
 
-#include <KUniqueApplication>
-#include <KStandardDirs>
-#include <KAction>
-#include <KToggleAction>
-
-
-#include <iostream>
-using namespace std;
-
+#include <QApplication>
 
 int defaultWidth = 25;
 int defaultHeight = 25;
@@ -67,7 +60,7 @@ void ThemeLoader::loadTheme(QString& themeName)
         else {
             if (QString::compare(themeName, "standart")==0) {
                 loading = false;
-                kapp->quit();
+                qApp->quit();
             }
             else {
                 themeName="standart";
@@ -109,8 +102,8 @@ void ThemeLoader::loadColorStyle()
 }
 void ThemeLoader::findColorStyles(QMenu *colors, const QString& configSelectedStyle)
 {
-    KStandardDirs kdirs;
-    QStringList dirs = kdirs.findDirs("data", "kvkbd");
+    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "qtvkbd", QStandardPaths::LocateDirectory);
+
 
     QActionGroup *color_group = new QActionGroup(colors);
     color_group->setExclusive(true);
@@ -128,7 +121,7 @@ void ThemeLoader::findColorStyles(QMenu *colors, const QString& configSelectedSt
 
 
     colors->setTitle("Color Style");
-    colors->setIcon(KIcon("preferences-desktop-color"));
+    //colors->setIcon(KIcon("preferences-desktop-color"));
     QListIterator<QString> itr(dirs);
     while (itr.hasNext()) {
         QString data_path = itr.next() + "colors";
@@ -458,5 +451,3 @@ void ThemeLoader::loadKeys(MainWidget *vPart, const QDomNode& wNode)
 
 
 }
-
-#include "themeloader.moc"

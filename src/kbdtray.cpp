@@ -1,5 +1,6 @@
 /*
- * This file is part of the Kvkbd project.
+ * This file is part of the Qtvkbd project.
+ * Copyright (C) 2016-2017 Alexander Ryapolov <srwork@gmail.com>
  * Copyright (C) 2007-2014 Todor Gyumyushev <yodor1@gmail.com>
  * Copyright (C) 2008 Guillaume Martres <smarter@ubuntu.com>
  * 
@@ -20,26 +21,13 @@
 
 #include "kbdtray.h"
 
-#include <KAction>
-#include <KToggleAction>
-#include <KToggleAction>
-#include <KLocalizedString>
-#include <KIcon>
-#include <KIconLoader>
-#include <KCmdLineArgs>
-#include <KHelpMenu>
-#include <KMenu>
-#include <KFontDialog>
-#include <KUniqueApplication>
-
 // TODO: find a way to hide the widget before asking for quit
-KbdTray::KbdTray(QWidget* parent) : KSystemTrayIcon(parent)
+KbdTray::KbdTray(QWidget* parent) : QSystemTrayIcon(parent)
 {
-    setObjectName("KvkbdTray");
-    setIcon(UserIcon("tray"));
+    setObjectName("QtvkbdTray");
+    setIcon(QIcon(":/pics/tray.png"));
 
-    QAction *titleAction = contextMenuTitle();
-    titleAction->setText("Kvkbd");
+    //contextMenu()->setTitle("Qtvkbd");
 
     connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(activationHandler(QSystemTrayIcon::ActivationReason)));
 

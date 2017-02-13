@@ -1,5 +1,6 @@
 /*
- * This file is part of the Kvkbd project.
+ * This file is part of the Qtvkbd project.
+ * Copyright (C) 2016-2017 Alexander Ryapolov <srwork@gmail.com>
  * Copyright (C) 2007-2014 Todor Gyumyushev <yodor1@gmail.com>
  * Copyright (C) 2008 Guillaume Martres <smarter@ubuntu.com>
  *
@@ -18,7 +19,7 @@
  *
  */
 
-#include "kvkbdapp.h"
+#include "qtvkbdapp.h"
 
 #include <QDebug>
 #include <QDesktopWidget>
@@ -29,29 +30,16 @@
 #include <QMenu>
 #include <QAction>
 #include <QFileInfo>
-#include <QDir>
 
-#include <KConfig>
-#include <KConfigGroup>
-#include <KAction>
-#include <KToggleAction>
-#include <KHelpMenu>
-#include <KFontDialog>
-
-#include <KCmdLineArgs>
-
+#include <QSettings>
+#include <QFontDialog>
 
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 
 #include <fixx11h.h>
 
-
-
 QList<VButton*> modKeys;
-
-#include <iostream>
-using namespace std;
 
 #define DEFAULT_WIDTH 	640
 #define DEFAULT_HEIGHT 	210
@@ -59,8 +47,8 @@ using namespace std;
 #include "x11keyboard.h"
 
 
-KvkbdApp::KvkbdApp(bool loginhelper) : KUniqueApplication(), is_login(loginhelper)
-// : KApplication()
+// TODO: Allow only one application instance
+QtvkbdApp::QtvkbdApp(int &argc, char **argv, bool loginhelper) : QApplication(argc, argv), is_login(loginhelper)
 {
 
     signalMapper = new QSignalMapper(this);
@@ -70,10 +58,8 @@ KvkbdApp::KvkbdApp(bool loginhelper) : KUniqueApplication(), is_login(loginhelpe
     widget->setContentsMargins(10,10,10,10);
     widget->setProperty("name", "main");
 
-    KConfigGroup cfg = KGlobal::config()->group("");
+    QSettings cfg(QSettings::IniFormat, QSettings::UserScope, "qtvkbd", "qtvkbd");
 
-    
-    
     if (!is_login) {
       widget->setAttribute(Qt::WA_ShowWithoutActivating);
       widget->setAttribute(Qt::WA_DeleteOnClose, false);
@@ -105,23 +91,26 @@ KvkbdApp::KvkbdApp(bool loginhelper) : KUniqueApplication(), is_login(loginhelpe
 
 
     
-    QMenu *cmenu = tray->contextMenu();
+    //QMenu *cmenu = tray->contextMenu();
+    QMenu *cmenu = new QMenu(widget);
 
-    KAction *chooseFontAction = new KAction(KIcon("preferences-desktop-font"), i18nc("@action:inmenu", "Choose Font..."), this);
+    QAction *chooseFontAction = new QAction(tr("Choose Font..."), this);
     connect(chooseFontAction, SIGNAL(triggered(bool)), this, SLOT(chooseFont()) );
     cmenu->addAction(chooseFontAction);
 
-    KToggleAction *autoResizeAction = new KToggleAction(i18nc("@action:inmenu", "Auto Resize Font"), this);
-    bool autoResizeEnabled = cfg.readEntry("autoresfont",true);
+    QAction *autoResizeAction = new QAction(tr("Auto Resize Font"), this);
+    autoResizeAction->setCheckable(true);
+    bool autoResizeEnabled = cfg.value("autoresfont", QVariant(true)).toBool();
     autoResizeAction->setChecked(autoResizeEnabled);
     widget->setProperty("autoresfont", autoResizeEnabled);
     cmenu->addAction(autoResizeAction);
     connect(autoResizeAction,SIGNAL(triggered(bool)), this, SLOT(autoResizeFont(bool)));
 
 
-    bool blur = cfg.readEntry("blurBackground", QVariant(true)).toBool();
+    bool blur = cfg.value("blurBackground", QVariant(true)).toBool();
 
-    KToggleAction *blurBackgroundAction = new KToggleAction(i18nc("@action:inmenu", "Blur Background"), this);
+    QAction *blurBackgroundAction = new QAction(tr("Blur Background"), this);
+    blurBackgroundAction->setCheckable(true);
     blurBackgroundAction->setChecked(blur);
     cmenu->addAction(blurBackgroundAction);
     widget->blurBackground(blur);
@@ -131,40 +120,48 @@ KvkbdApp::KvkbdApp(bool loginhelper) : KUniqueApplication(), is_login(loginhelpe
     widget->blurBackground(blur);
     dock->blurBackground(blur);
 
-    bool dockVisible = cfg.readEntry("showdock", QVariant(false)).toBool();
-    KToggleAction *showDockAction = new KToggleAction(i18nc("@action:inmenu", "Show Dock"), this);
+    bool dockVisible = cfg.value("showdock", QVariant(false)).toBool();
+    QAction *showDockAction = new QAction(tr("Show Dock"), this);
+    showDockAction->setCheckable(true);
     showDockAction->setChecked(dockVisible);
     cmenu->addAction(showDockAction);
     connect(showDockAction,SIGNAL(triggered(bool)), dock, SLOT(setVisible(bool)));
 
-    bool isLocked = cfg.readEntry("locked", QVariant(false)).toBool();
-    KToggleAction *lockOnScreenAction = new KToggleAction(i18nc("@action:inmenu", "Lock on Screen"), this);
+    bool isLocked = cfg.value("locked", QVariant(false)).toBool();
+    QAction *lockOnScreenAction = new QAction(tr("Lock on Screen"), this);
+    lockOnScreenAction->setCheckable(true);
     lockOnScreenAction->setChecked(isLocked);
     cmenu->addAction(lockOnScreenAction);
     connect(lockOnScreenAction,SIGNAL(triggered(bool)), widget, SLOT(setLocked(bool)));
 
-    bool stickyModKeys = cfg.readEntry("stickyModKeys", QVariant(false)).toBool();
-    KToggleAction *stickyModKeysAction = new KToggleAction(i18nc("@action:inmenu", "Sticky Modifier Keys"), this);
+    bool stickyModKeys = cfg.value("stickyModKeys", QVariant(false)).toBool();
+    QAction *stickyModKeysAction = new QAction(tr("Sticky Modifier Keys"), this);
+    lockOnScreenAction->setCheckable(true);
     stickyModKeysAction->setChecked(stickyModKeys);
     cmenu->addAction(stickyModKeysAction);
     connect(stickyModKeysAction,SIGNAL(triggered(bool)), this, SLOT(setStickyModKeys(bool)));
     widget->setProperty("stickyModKeys", stickyModKeys);
     
     
-    QFont font = cfg.readEntry("font", widget->font());
+    QFont font;
+    font.fromString(cfg.value("font", widget->font().toString()).toString());
     widget->setFont(font);
 
-    QString colorsFilename = cfg.readEntry("colors");
+    QString colorsFilename = cfg.value("colors").toString();
     QMenu *colors = new QMenu(widget);
     themeLoader->findColorStyles(colors, colorsFilename);
     cmenu->addMenu(colors);
     connect(themeLoader, SIGNAL(colorStyleChanged()), widget, SLOT(repaint()));
     connect(themeLoader, SIGNAL(colorStyleChanged()), dock, SLOT(repaint()));
 
-    KHelpMenu *helpMenu = new KHelpMenu(widget, KCmdLineArgs::aboutData());
-    cmenu->addMenu((QMenu*)helpMenu->menu());
 
-    QString themeName = cfg.readEntry("layout", "standart");
+    QAction *quitAction = new QAction(tr("Quit"), this);
+    cmenu->addAction(quitAction);
+    connect(quitAction,SIGNAL(triggered(bool)), this, SLOT(quit()));
+
+    tray->setContextMenu(cmenu);
+
+    QString themeName = cfg.value("layout", "standart").toString();
     themeLoader->loadTheme(themeName);
     widget->setProperty("layout", themeName);
 
@@ -180,7 +177,7 @@ KvkbdApp::KvkbdApp(bool loginhelper) : KUniqueApplication(), is_login(loginhelpe
     QRect widgetGeometry(bottomRight, defaultSize);
     qDebug() << "widgetGeometry: " << widgetGeometry;
 
-    QRect c_geometry = cfg.readEntry("geometry", widgetGeometry);
+    QRect c_geometry = cfg.value("geometry", widgetGeometry).toRect();
     if (!screenGeometry.contains(c_geometry, true)) {
         c_geometry = widgetGeometry;
     }
@@ -191,16 +188,16 @@ KvkbdApp::KvkbdApp(bool loginhelper) : KUniqueApplication(), is_login(loginhelpe
 
     QRect dockGeometry(pos, dock->size());
     
-    QRect c_dock_geometry = cfg.readEntry("dockGeometry", dockGeometry);
+    QRect c_dock_geometry = cfg.value("dockGeometry", dockGeometry).toRect();
     if (!screenGeometry.contains(c_dock_geometry, true)) {
-	c_dock_geometry = dockGeometry;
+    c_dock_geometry = dockGeometry;
     }
     dock->setGeometry(c_dock_geometry);
     
     widget->show();
 
     
-    bool extensionVisible = cfg.readEntry("extentVisible", QVariant(true)).toBool();
+    bool extensionVisible = cfg.value("extentVisible", QVariant(true)).toBool();
     if (!extensionVisible) {
         toggleExtension();
     }
@@ -219,13 +216,13 @@ KvkbdApp::KvkbdApp(bool loginhelper) : KUniqueApplication(), is_login(loginhelpe
     xkbd->start();
 
     if (!is_login) {
-      bool vis = cfg.readEntry("visible", QVariant(true)).toBool();
+      bool vis = cfg.value("visible", QVariant(true)).toBool();
       if (!vis ) {
 	
 	widget->showMinimized();
 	
       }
-      widget->setWindowTitle("kvkbd");
+      widget->setWindowTitle("qtvkbd");
       tray->show();
     }
     else {
@@ -233,37 +230,37 @@ KvkbdApp::KvkbdApp(bool loginhelper) : KUniqueApplication(), is_login(loginhelpe
 	timer->setInterval(1000);
 	connect(timer, SIGNAL(timeout()), widget, SLOT(raise()));
 	timer->start();
-	widget->setWindowTitle("kvkbd.login");
+    widget->setWindowTitle("qtvkbd.login");
     }
 
 }
 
-KvkbdApp::~KvkbdApp()
+QtvkbdApp::~QtvkbdApp()
 {
 
 }
 
-void KvkbdApp::storeConfig()
+void QtvkbdApp::storeConfig()
 {
-    KConfigGroup cfg = KGlobal::config()->group("");
+    QSettings cfg(QSettings::IniFormat, QSettings::UserScope, "qtvkbd", "qtvkbd");
     
-    cfg.writeEntry("visible", widget->isVisible());
-    cfg.writeEntry("geometry", widget->geometry());
-    cfg.writeEntry("locked", widget->isLocked());
-    cfg.writeEntry("stickyModKeys", widget->property("stickyModKeys"));
+    cfg.setValue("visible", widget->isVisible());
+    cfg.setValue("geometry", widget->geometry());
+    cfg.setValue("locked", widget->isLocked());
+    cfg.setValue("stickyModKeys", widget->property("stickyModKeys").toBool());
     
-    cfg.writeEntry("showdock", dock->isVisible());
-    cfg.writeEntry("dockGeometry", dock->geometry());
+    cfg.setValue("showdock", dock->isVisible());
+    cfg.setValue("dockGeometry", dock->geometry());
     
-    cfg.writeEntry("layout", widget->property("layout"));
-    cfg.writeEntry("colors", widget->property("colors"));
-    cfg.writeEntry("font", widget->font());
-    cfg.writeEntry("autoresfont", widget->property("autoresfont").toBool());
-    cfg.writeEntry("blurBackground", widget->property("blurBackground").toBool());
+    cfg.setValue("layout", widget->property("layout").toString());
+    cfg.setValue("colors", widget->property("colors").toString());
+    cfg.setValue("font", widget->font().toString());
+    cfg.setValue("autoresfont", widget->property("autoresfont").toBool());
+    cfg.setValue("blurBackground", widget->property("blurBackground").toBool());
 
     MainWidget *prt = parts.value("extension");
     if (prt) {
-        cfg.writeEntry("extentVisible", prt->isVisible());
+        cfg.setValue("extentVisible", prt->isVisible());
     }
 
     cfg.sync();
@@ -271,18 +268,18 @@ void KvkbdApp::storeConfig()
 }
 
 
-void KvkbdApp::autoResizeFont(bool mode)
+void QtvkbdApp::autoResizeFont(bool mode)
 {
     widget->setProperty("autoresfont", QVariant(mode));
     emit fontUpdated(widget->font());
 
 }
-void KvkbdApp::setStickyModKeys(bool mode)
+void QtvkbdApp::setStickyModKeys(bool mode)
 {
     widget->setProperty("stickyModKeys", QVariant(mode));
 }
 
-void KvkbdApp::chooseFont()
+void QtvkbdApp::chooseFont()
 {
     bool restore = false;
 
@@ -293,8 +290,9 @@ void KvkbdApp::chooseFont()
 
     QFont widgetFont = widget->font();
 
-    int result = KFontDialog::getFont( widgetFont, KFontChooser::NoDisplayFlags, widget );
-    if ( result == KFontDialog::Accepted ) {
+    bool result;
+    widgetFont = QFontDialog::getFont(&result, widget->font(), widget);
+    if ( result ) {
 
         widget->setFont(widgetFont);
         emit fontUpdated(widgetFont);
@@ -304,14 +302,12 @@ void KvkbdApp::chooseFont()
     if (restore) {
         widget->show();
     }
-
-
 }
 
 
 
 
-void KvkbdApp::buttonLoaded(VButton *btn)
+void QtvkbdApp::buttonLoaded(VButton *btn)
 {
     if (btn->property("modifier").toBool() == true) {
         modKeys.append(btn);
@@ -334,7 +330,7 @@ void KvkbdApp::buttonLoaded(VButton *btn)
     }
 
 }
-void KvkbdApp::partLoaded(MainWidget *vPart, int total_rows, int total_cols)
+void QtvkbdApp::partLoaded(MainWidget *vPart, int total_rows, int total_cols)
 {
     //cout << "Col Strech: " << total_cols << endl;
     // cout << "Row Strech: " << total_rows << endl;
@@ -365,7 +361,7 @@ void KvkbdApp::partLoaded(MainWidget *vPart, int total_rows, int total_cols)
 
 
 }
-void KvkbdApp::keyProcessComplete(unsigned int)
+void QtvkbdApp::keyProcessComplete(unsigned int)
 {
     if (widget->property("stickyModKeys").toBool()) return;
     
@@ -378,7 +374,7 @@ void KvkbdApp::keyProcessComplete(unsigned int)
     }
 }
 
-void KvkbdApp::buttonAction(const QString &action)
+void QtvkbdApp::buttonAction(const QString &action)
 {
 
     if (QString::compare(action , "toggleVisibility")==0) {
@@ -403,7 +399,7 @@ void KvkbdApp::buttonAction(const QString &action)
         }
     }
 }
-void KvkbdApp::toggleExtension()
+void QtvkbdApp::toggleExtension()
 {
     MainWidget *prt = parts.value("extension");
     if (prt->isVisible()) {
@@ -417,8 +413,3 @@ void KvkbdApp::toggleExtension()
         prt->show();
     }
 }
-
-
-
-
-#include "kvkbdapp.moc"

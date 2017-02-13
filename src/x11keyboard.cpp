@@ -1,5 +1,6 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
+ * This file is part of the Qtvkbd project.
+ * Copyright (C) 2016-2017 Alexander Ryapolov <srwork@gmail.com>
  * Copyright (C) 2014 Todor Gyumyushev <yodor1@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,17 +18,15 @@
  *
  */
 
-#include "x11keyboard.h"
-
-
-
 #include <QX11Info>
 #include <QDesktopWidget>
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusReply>
 
+#include "vbutton.h"
 
+#include "x11keyboard.h"
 
 #include <X11/extensions/XTest.h>
 #include <X11/Xlocale.h>
@@ -38,11 +37,10 @@
 
 #include <X11/XKBlib.h>
 
-#include "vbutton.h"
+#include <fixx11h.h>
+
 extern QList<VButton *> modKeys;
 
-#include <iostream>
-using namespace std;
 
 X11Keyboard::X11Keyboard(QObject *parent): VKeyboard(parent)
 {
@@ -211,7 +209,7 @@ void X11Keyboard::layoutChanged()
     }
 
 }
-void X11Keyboard::textForKeyCode(unsigned int keyCode,  ButtonText& text)
+void X11Keyboard::textForKeyCode(unsigned int keyCode,  QString &text)
 {
     if (keyCode==0) {
         text.clear();
@@ -246,5 +244,3 @@ void X11Keyboard::textForKeyCode(unsigned int keyCode,  ButtonText& text)
     XFree ((char *) keysym);
 
 }
-
-

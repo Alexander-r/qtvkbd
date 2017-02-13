@@ -1,4 +1,6 @@
 /*
+ * This file is part of the Qtvkbd project.
+ * Copyright (C) 2016-2017 Alexander Ryapolov <srwork@gmail.com>
  * Copyright (C) 2007-2014 Todor Gyumyushev <yodor1@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,12 +21,12 @@
 #ifndef KBDTRAY_H
 #define KBDTRAY_H
 
-#include <KSystemTrayIcon>
+#include <QSystemTrayIcon>
 #include <QMenu>
 #include <QSystemTrayIcon>
 #include <QFont>
 
-class KbdTray : public KSystemTrayIcon
+class KbdTray : public QSystemTrayIcon
 {
     Q_OBJECT
     
