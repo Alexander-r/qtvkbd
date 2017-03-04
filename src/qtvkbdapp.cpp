@@ -37,8 +37,6 @@
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 
-#include <fixx11h.h>
-
 QList<VButton*> modKeys;
 
 #define DEFAULT_WIDTH 	640

@@ -8,9 +8,6 @@
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 
-#include <fixx11h.h>
-
-
 DragWidget::DragWidget(QWidget *parent) :
     QWidget(parent),  dragged(false), moved(false), locked(false)
 {

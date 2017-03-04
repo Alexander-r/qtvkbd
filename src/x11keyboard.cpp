@@ -37,8 +37,6 @@
 
 #include <X11/XKBlib.h>
 
-#include <fixx11h.h>
-
 extern QList<VButton *> modKeys;
 
 
