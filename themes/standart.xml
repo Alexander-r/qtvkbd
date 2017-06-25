@@ -55,8 +55,8 @@
         <spacing width="FKeys"/>
         <key code="75" width="FKey" height="FKey" label="F9" colorGroup="function"/>
         <key code="76" width="FKey" height="FKey" label="F10" colorGroup="function"/>
-        <key code="77" width="FKey" height="FKey" label="F11" colorGroup="function"/>
-        <key code="78" width="FKey" height="FKey" label="F12" colorGroup="function"/>
+        <key code="95" width="FKey" height="FKey" label="F11" colorGroup="function"/>
+        <key code="96" width="FKey" height="FKey" label="F12" colorGroup="function"/>
         <spacing width="SpecialKeys"/>
         <key action="toggleExtension" width="FKey" height="FKey" label=" " colorGroup="settings"/>
         <key action="hide" width="FKey" height="FKey" label=" " colorGroup="hide"/>
