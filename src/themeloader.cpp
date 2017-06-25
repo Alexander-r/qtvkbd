@@ -102,7 +102,7 @@ void ThemeLoader::loadColorStyle()
 }
 void ThemeLoader::findColorStyles(QMenu *colors, const QString& configSelectedStyle)
 {
-    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "qtvkbd", QStandardPaths::LocateDirectory);
+    QStringList dirs = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
 
 
     QActionGroup *color_group = new QActionGroup(colors);
@@ -124,7 +124,7 @@ void ThemeLoader::findColorStyles(QMenu *colors, const QString& configSelectedSt
     //colors->setIcon(KIcon("preferences-desktop-color"));
     QListIterator<QString> itr(dirs);
     while (itr.hasNext()) {
-        QString data_path = itr.next() + "colors";
+        QString data_path = itr.next();
 
         QFileInfo info(data_path);
         if (info.isDir() && info.isReadable()) {
