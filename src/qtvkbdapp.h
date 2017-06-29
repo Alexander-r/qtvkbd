@@ -41,7 +41,7 @@ class QtvkbdApp : public QApplication
     Q_OBJECT
 
 public:
-    QtvkbdApp(int &argc, char **argv, bool loginhelper=false);
+    QtvkbdApp(int &argc, char **argv, bool minimized=false, bool loginhelper=false);
     ~QtvkbdApp();
 
     

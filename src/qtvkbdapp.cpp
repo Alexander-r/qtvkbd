@@ -21,7 +21,7 @@
 
 #include "qtvkbdapp.h"
 
-#include <QDebug>
+//#include <QDebug>
 #include <QDesktopWidget>
 #include <QDomDocument>
 #include <QFile>
@@ -46,7 +46,7 @@ QList<VButton*> modKeys;
 
 
 // TODO: Allow only one application instance
-QtvkbdApp::QtvkbdApp(int &argc, char **argv, bool loginhelper) : QApplication(argc, argv), is_login(loginhelper)
+QtvkbdApp::QtvkbdApp(int &argc, char **argv, bool minimized, bool loginhelper) : QApplication(argc, argv), is_login(loginhelper)
 {
 
     signalMapper = new QSignalMapper(this);
@@ -168,12 +168,12 @@ QtvkbdApp::QtvkbdApp(int &argc, char **argv, bool loginhelper) : QApplication(ar
     QDesktopWidget *pDesktop = QApplication::desktop();
 
     QRect screenGeometry = pDesktop->availableGeometry(pDesktop->underMouse());
-    qDebug() << "ScreenGeometry: " << screenGeometry;
+    //qDebug() << "ScreenGeometry: " << screenGeometry;
 
     QPoint bottomRight = screenGeometry.bottomRight()-QPoint(defaultSize.width(), defaultSize.height());
 
     QRect widgetGeometry(bottomRight, defaultSize);
-    qDebug() << "widgetGeometry: " << widgetGeometry;
+    //qDebug() << "widgetGeometry: " << widgetGeometry;
 
     QRect c_geometry = cfg.value("geometry", widgetGeometry).toRect();
     if (!screenGeometry.contains(c_geometry, true)) {
@@ -214,11 +214,11 @@ QtvkbdApp::QtvkbdApp(int &argc, char **argv, bool loginhelper) : QApplication(ar
     xkbd->start();
 
     if (!is_login) {
-      bool vis = cfg.value("visible", QVariant(true)).toBool();
-      if (!vis ) {
-	
-	widget->showMinimized();
-	
+      //bool vis = cfg.value("visible", QVariant(true)).toBool();
+      //if (!vis || minimized) {
+      if (minimized) {
+          widget->showMinimized();
+          widget->setVisible(false);
       }
       widget->setWindowTitle("qtvkbd");
       tray->show();

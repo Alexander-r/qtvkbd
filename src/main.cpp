@@ -69,10 +69,15 @@ int main(int argc, char **argv)
 {
     QCommandLineParser parser;
     parser.setApplicationDescription("A virtual keyboard");
+    parser.addHelpOption();
     parser.addOption(
         {{"l", "loginhelper"},
             QCoreApplication::translate("main", "Stand alone version for use with KDM or XDM.\n"
                                                 "See qtvkbd Handbook for information on how to use this option.")}
+    );
+    parser.addOption(
+        {{"m", "minimized"},
+            QCoreApplication::translate("main", "Start minimized.")}
     );
     QStringList arguments;
     for (int a = 0; a < argc; ++a)
@@ -82,11 +87,13 @@ int main(int argc, char **argv)
     parser.parse(arguments);
 
     bool is_login = parser.isSet("loginhelper");
-    if (!is_login) {
+    bool minimized = parser.isSet("minimized");
+    if (is_login) {
       findLoginWindow();
     }
 	
-    QtvkbdApp app(argc, argv, is_login);
+    QtvkbdApp app(argc, argv, minimized, is_login);
+    parser.process(app);
 
     return app.exec();
     
