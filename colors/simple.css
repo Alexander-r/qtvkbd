@@ -9,12 +9,12 @@ VButton {
     padding:0px;
     border-style: outset;
     
-    border-width: 1px;
+    border-width: 0px;
     
-    font-size:13px;
+    font-size:20px;
     font-weight:bold;
-    background-color:rgba(172,172,172,70%);
-    border-color: #000000;
+    background-color:rgba(240,240,240,70%);
+    border-color: #00000000;
 /*     background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #FFFFFF, stop: 1 #999999 ); */
 
     color:black;
@@ -37,10 +37,10 @@ VButton:hover {
   
 }
 VButton[action="toggleExtension"] {
-  background-color:gray;
-  border-color: gray;
+  background-color:rgba(8100b041);
+  border-color:00000000;
 }
 VButton[action="toggleVisibility"] {
-  background-color:red;
-  border-color:red;
+  background-color:rgba(ff000091);
+  border-color:00000000;
 }
