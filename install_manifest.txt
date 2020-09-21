@@ -1,0 +1,4 @@
+/usr/local/bin/qtvkbd
+/usr/local/share/applications/qtvkbd.desktop
+/usr/local/share/qtvkbd/simple.css
+/usr/local/share/qtvkbd/standart.xml

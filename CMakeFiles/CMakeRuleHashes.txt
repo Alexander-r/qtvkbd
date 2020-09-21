@@ -1,0 +1,7 @@
+# Hashes of file build rules.
+080db465c689419f2b0b412f780b6a15 src/CMakeFiles/qtvkbd_autogen
+9c502c46215d2c36852e85af015dc2cc src/dockadaptor.cpp
+abf868c48f27b8fa773ccd7267e6ea51 src/dockadaptor.moc
+e0c9eb1b8ced3ca68666e4136292a003 src/qrc_resources.cpp
+192cafcef3a380cda58cc65d83fdab0b src/qtvkbdadaptor.cpp
+ecac930675553fe099d65245be0dc895 src/qtvkbdadaptor.moc

@@ -1,0 +1,5 @@
+-I/home/edge/progects/qtvkbd/src
+-I/home/edge/progects/qtvkbd/src
+-o
+/home/edge/progects/qtvkbd/src/dockadaptor.moc
+/home/edge/progects/qtvkbd/src/dockadaptor.h
