@@ -29,10 +29,12 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QAction>
+#include <QWidgetAction>
 #include <QFileInfo>
-
 #include <QSettings>
 #include <QFontDialog>
+#include <QInputDialog>
+#include <QSlider>
 
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
@@ -152,6 +154,11 @@ QtvkbdApp::QtvkbdApp(int &argc, char **argv, bool minimized, bool loginhelper) :
     connect(themeLoader, SIGNAL(colorStyleChanged()), widget, SLOT(repaint()));
     connect(themeLoader, SIGNAL(colorStyleChanged()), dock, SLOT(repaint()));
 
+    opacity_value = cfg.value("opacity", 100).toInt();
+    QAction *chooseOpacityAction = new QAction(tr("Choose opacity..."), this);
+    connect(chooseOpacityAction, SIGNAL(triggered(bool)), this, SLOT(chooseOpacity()));
+    cmenu->addAction(chooseOpacityAction);
+
 
     QAction *quitAction = new QAction(tr("Quit"), this);
     cmenu->addAction(quitAction);
@@ -234,7 +241,9 @@ QtvkbdApp::QtvkbdApp(int &argc, char **argv, bool minimized, bool loginhelper) :
 	timer->start();
     widget->setWindowTitle("qtvkbd.login");
     }
-
+    opacity_effect = new QGraphicsOpacityEffect(widget);
+    opacity_effect->setOpacity(qreal(opacity_value)/100.0);
+    widget->setGraphicsEffect(opacity_effect);
 }
 
 QtvkbdApp::~QtvkbdApp()
@@ -260,6 +269,7 @@ void QtvkbdApp::storeConfig()
     cfg.setValue("font", widget->font().toString());
     cfg.setValue("autoresfont", widget->property("autoresfont").toBool());
     cfg.setValue("blurBackground", widget->property("blurBackground").toBool());
+    cfg.setValue("opacity", opacity_value);
 
     MainWidget *prt = parts.value("extension");
     if (prt) {
@@ -414,5 +424,26 @@ void QtvkbdApp::toggleExtension()
         QRect span = layoutPosition.value(partName);
         layout->addWidget(prt,span.y(),span.x(), span.height(), span.width());
         prt->show();
+    }
+}
+
+void QtvkbdApp::chooseOpacity()
+{
+    bool restore = false;
+
+    if (widget->isVisible()) {
+        widget->hide();
+        restore = true;
+    }
+
+    bool ok;
+    int result = QInputDialog::getInt(widget, tr("Opacity"), tr("Opacity percentage:"), opacity_value, 0, 100, 5, &ok);
+    if (ok) {
+        opacity_value = result;
+        opacity_effect->setOpacity(qreal(result)/100.0);
+    }
+
+    if (restore) {
+        widget->show();
     }
 }

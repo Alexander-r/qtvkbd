@@ -27,6 +27,7 @@
 #include <QGridLayout>
 #include <QDomNode>
 #include <QDomNamedNodeMap>
+#include <QGraphicsOpacityEffect>
 
 #include "resizabledragwidget.h"
 #include "mainwidget.h"
@@ -61,6 +62,7 @@ public slots:
     void partLoaded(MainWidget *vPart, int total_rows, int total_cols);
     void buttonLoaded(VButton *btn);
 
+    void chooseOpacity();
     
     
 protected:
@@ -89,6 +91,9 @@ protected:
     VKeyboard *xkbd;
     
     bool is_login;
+
+    QGraphicsOpacityEffect *opacity_effect;
+    int opacity_value;
     
 signals:
     void textSwitch(bool);
