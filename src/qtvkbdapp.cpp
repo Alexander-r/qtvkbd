@@ -220,6 +220,10 @@ QtvkbdApp::QtvkbdApp(int &argc, char **argv, bool minimized, bool loginhelper) :
           widget->showMinimized();
           widget->setVisible(false);
       }
+      else if (cfg.value("minimized", false).toBool()) {
+          widget->showMinimized();
+          widget->setVisible(false);
+      }
       widget->setWindowTitle("qtvkbd");
       tray->show();
     }
@@ -243,6 +247,7 @@ void QtvkbdApp::storeConfig()
     QSettings cfg(QSettings::IniFormat, QSettings::UserScope, "qtvkbd", "qtvkbd");
     
     cfg.setValue("visible", widget->isVisible());
+    cfg.setValue("minimized", widget->isMinimized());
     cfg.setValue("geometry", widget->geometry());
     cfg.setValue("locked", widget->isLocked());
     cfg.setValue("stickyModKeys", widget->property("stickyModKeys").toBool());
