@@ -32,7 +32,8 @@ SOURCES += \
     src/themeloader.cpp \
     src/vbutton.cpp \
     src/vkeyboard.cpp \
-    src/x11keyboard.cpp
+    src/x11keyboard.cpp \
+    src/sliderdialog.cpp
 
 HEADERS  += \
     src/dragwidget.h \
@@ -45,7 +46,8 @@ HEADERS  += \
     src/themeloader.h \
     src/vbutton.h \
     src/vkeyboard.h \
-    src/x11keyboard.h
+    src/x11keyboard.h \
+    src/sliderdialog.h
 
 FORMS    +=
 

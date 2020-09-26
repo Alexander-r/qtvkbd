@@ -18,6 +18,7 @@ set(qtvkbd_SRCS vkeyboard.cpp
     qtvkbdapp.cpp
     kbdtray.cpp
     themeloader.cpp
+    sliderdialog.cpp
     )
 
 

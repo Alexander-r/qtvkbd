@@ -39,6 +39,8 @@
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 
+#include "sliderdialog.h"
+
 QList<VButton*> modKeys;
 
 #define DEFAULT_WIDTH 	640
@@ -437,7 +439,8 @@ void QtvkbdApp::chooseOpacity()
     }
 
     bool ok;
-    int result = QInputDialog::getInt(widget, tr("Opacity"), tr("Opacity percentage:"), opacity_value, 0, 100, 5, &ok);
+    SliderDialog *sliderDialog = new SliderDialog(tr("Opacity"), tr("Opacity percentage:"), opacity_value, 0, 100, 1, &ok, widget);
+    int result = sliderDialog->exec();
     if (ok) {
         opacity_value = result;
         opacity_effect->setOpacity(qreal(result)/100.0);
